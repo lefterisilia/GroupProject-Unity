@@ -26,11 +26,6 @@
 # Visual Studio cache directory
 .vs/
 
-# Existing content of your .gitignore file
-
-# Ignore the .idea file itself
-/.idea
-
 # Gradle cache directory
 .gradle/
 
