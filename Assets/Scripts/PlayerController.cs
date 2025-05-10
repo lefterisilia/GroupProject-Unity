@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour
     public float standingHeight = 2f;
     public float crouchingHeight = 1f;
 
+    public bool IsSprinting { get; private set; }
+
     private CharacterController controller;
     private Vector3 velocity;
     private bool isCrouching;
@@ -44,10 +46,13 @@ public class PlayerController : MonoBehaviour
     float GetCurrentSpeed()
     {
         if (isCrouching)
+        {
+            IsSprinting = false;
             return crouchSpeed;
-        if (Input.GetKey(KeyCode.LeftShift))
-            return sprintSpeed;
-        return walkSpeed;
+        }
+
+        IsSprinting = Input.GetKey(KeyCode.LeftShift);
+        return IsSprinting ? sprintSpeed : walkSpeed;
     }
 
     void Crouch()
