@@ -8,17 +8,42 @@ public class SprintFollowTrigger : MonoBehaviour
 
     private bool isPlayerInTrigger = false;
     private PlayerController playerController;
+    private Vector3? lastSeenPosition = null;
 
     void Update()
     {
         if (isPlayerInTrigger && player != null && playerController != null)
         {
-            if (playerController.IsSprinting && HasLineOfSight())
+            bool canSeePlayer = HasLineOfSight();
+
+            if (playerController.IsSprinting && canSeePlayer)
             {
-                // Only move if sprinting AND visible
-                transform.parent.position = Vector3.MoveTowards(transform.parent.position, player.position, followSpeed * Time.deltaTime);
+                lastSeenPosition = player.position;
+                MoveToPosition(player.position);
+            }
+            else if (lastSeenPosition.HasValue)
+            {
+                float distance = Vector3.Distance(transform.parent.position, lastSeenPosition.Value);
+
+                if (distance > 0.1f)
+                {
+                    MoveToPosition(lastSeenPosition.Value);
+                }
+                else
+                {
+                    // Stop chasing when reached last position and can't see player
+                    if (!canSeePlayer)
+                    {
+                        lastSeenPosition = null; // Release control
+                    }
+                }
             }
         }
+    }
+
+    void MoveToPosition(Vector3 target)
+    {
+        transform.parent.position = Vector3.MoveTowards(transform.parent.position, target, followSpeed * Time.deltaTime);
     }
 
     void OnTriggerEnter(Collider other)
@@ -39,6 +64,7 @@ public class SprintFollowTrigger : MonoBehaviour
         {
             isPlayerInTrigger = false;
             playerController = null;
+            lastSeenPosition = null; // Forget if player leaves zone
         }
     }
 
@@ -48,18 +74,16 @@ public class SprintFollowTrigger : MonoBehaviour
         Vector3 direction = player.position - origin;
         float distance = direction.magnitude;
 
-        Debug.DrawLine(origin, player.position, Color.red); // Optional debug
+        Debug.DrawLine(origin, player.position, Color.red);
 
-        RaycastHit hit;
-        if (Physics.Raycast(origin, direction.normalized, out hit, distance))
+        if (Physics.Raycast(origin, direction.normalized, out RaycastHit hit, distance))
         {
-            // Check if hit object is on an obstacle layer
             if (((1 << hit.collider.gameObject.layer) & obstacleLayers.value) != 0)
             {
-                return false; // Blocked by obstacle
+                return false; // Something is in the way
             }
         }
 
-        return true; // No obstacle
+        return true;
     }
 }

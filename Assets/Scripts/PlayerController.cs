@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     public float crouchingHeight = 1f;
 
     public bool IsSprinting { get; private set; }
+    public bool IsCrouching => isCrouching;
 
     private CharacterController controller;
     private Vector3 velocity;

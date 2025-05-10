@@ -1,18 +1,17 @@
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class MonsterFollow : MonoBehaviour
 {
     public Transform player;
     public float followSpeed = 5f;
+    public LayerMask obstacleLayers;
 
-    private bool shouldFollow = false;
+    private bool isPlayerInTrigger = false;
 
     void Update()
     {
-        if (shouldFollow && player != null)
+        if (isPlayerInTrigger && player != null && HasLineOfSight())
         {
-            // Move the PARENT of this object
             transform.parent.position = Vector3.MoveTowards(transform.parent.position, player.position, followSpeed * Time.deltaTime);
         }
     }
@@ -21,7 +20,7 @@ public class MonsterFollow : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            shouldFollow = true;
+            isPlayerInTrigger = true;
         }
     }
 
@@ -29,7 +28,27 @@ public class MonsterFollow : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            shouldFollow = false;
+            isPlayerInTrigger = false;
         }
+    }
+
+    bool HasLineOfSight()
+    {
+        Vector3 origin = transform.parent.position;
+        Vector3 direction = player.position - origin;
+        float distance = direction.magnitude;
+
+        Debug.DrawLine(origin, player.position, Color.green); // Optional debug line
+
+        RaycastHit hit;
+        if (Physics.Raycast(origin, direction.normalized, out hit, distance))
+        {
+            if (((1 << hit.collider.gameObject.layer) & obstacleLayers.value) != 0)
+            {
+                return false; // Line of sight blocked by obstacle
+            }
+        }
+
+        return true; // Clear path to player
     }
 }
