@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerController : MonoBehaviour
@@ -15,10 +15,15 @@ public class PlayerController : MonoBehaviour
 
     public bool IsSprinting { get; private set; }
     public bool IsCrouching => isCrouching;
+    public Vector3? LastSprintPosition { get; private set; }
 
     private CharacterController controller;
     private Vector3 velocity;
     private bool isCrouching;
+
+    // Sprint memory
+    private float sprintMemoryTime = 0.5f;
+    private float lastSprintTime;
 
     void Start()
     {
@@ -53,6 +58,12 @@ public class PlayerController : MonoBehaviour
         }
 
         IsSprinting = Input.GetKey(KeyCode.LeftShift);
+        if (IsSprinting)
+        {
+            LastSprintPosition = transform.position;
+            lastSprintTime = Time.time;
+        }
+
         return IsSprinting ? sprintSpeed : walkSpeed;
     }
 
@@ -66,5 +77,10 @@ public class PlayerController : MonoBehaviour
     {
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    public bool HasRecentlySprinted()
+    {
+        return Time.time - lastSprintTime <= sprintMemoryTime;
     }
 }
