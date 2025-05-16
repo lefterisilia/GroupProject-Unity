@@ -1,56 +1,63 @@
 using UnityEngine;
+using TMPro;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int maxHits = 2;
+    [Header("Health Settings")]
+    public int maxHP = 2;
+    public int currentHP;
+
+    [Header("Respawn Settings")]
     public Transform respawnPoint;
 
-    private int currentHits = 0;
-    private CharacterController controller;
-    private bool isStunned = false;
+    [Header("UI")]
+    public TextMeshProUGUI hpText;
+
+    private bool stunned = false;
 
     void Start()
     {
-        currentHits = 0;
-        controller = GetComponent<CharacterController>();
+        currentHP = maxHP;
+        UpdateUI();
     }
 
     public void TakeHit()
     {
-        if (isStunned) return;
+        if (stunned) return;
 
-        currentHits++;
+        currentHP--;
+        UpdateUI();
 
-        if (currentHits < maxHits)
+        if (currentHP <= 0)
         {
-            Debug.Log("[Player] Hit 1 - still alive");
-            // Optional: feedback/effect
-        }
-        else
-        {
-            Debug.Log("[Player] Hit 2 - respawning");
-            StartCoroutine(RespawnRoutine());
+            stunned = true;
+            Debug.Log("[Player] Knocked out!");
+            Respawn();
         }
     }
 
-    private System.Collections.IEnumerator RespawnRoutine()
+    void Respawn()
     {
-        isStunned = true;
+        // Move player to respawn point
+        if (respawnPoint != null)
+        {
+            transform.position = respawnPoint.position;
+        }
 
-        controller.enabled = false;
-        transform.position = respawnPoint.position;
-        yield return null; // one frame delay
-        controller.enabled = true;
+        currentHP = maxHP;
+        UpdateUI();
+        stunned = false;
 
-        yield return new WaitForSeconds(5f); // stunned time
-        isStunned = false;
-        currentHits = 0;
-
-        Debug.Log("[Player] Respawn finished");
+        // Optional: delay control restore, play wake-up effect etc.
     }
 
-    public bool IsStunned()
+    void UpdateUI()
     {
-        return isStunned;
+        if (hpText != null)
+        {
+            hpText.text = $"HP: {currentHP}/{maxHP}";
+        }
     }
+
+    public bool IsStunned() => stunned;
 }
