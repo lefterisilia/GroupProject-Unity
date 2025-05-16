@@ -2,14 +2,19 @@ using UnityEngine;
 
 public class DoorTrigger : MonoBehaviour
 {
-    public Animator doorAnimator; // Assign in Inspector
+    private Animator doorAnimator;
+
+    private void Awake()
+    {
+        // Find the Animator component in children (like the Door object inside the prefab)
+        doorAnimator = GetComponentInChildren<Animator>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            doorAnimator.SetBool("Open", true); // Triggers open
-            Debug.Log("Player entered trigger - door opening.");
+            doorAnimator.SetBool("Open", true);
         }
     }
 
@@ -17,8 +22,7 @@ public class DoorTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            doorAnimator.SetBool("Open", false); // Triggers close
-            Debug.Log("Player exited trigger - door closing.");
+            doorAnimator.SetBool("Open", false);
         }
     }
 }
