@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Animations.meta
 guid: 0f7a76db5fbd3bb43ab3e580d2598ed7
+========
+guid: 39f8a5732a15f774e8d434c1ce70a764
+>>>>>>>> mavrosflix-backup:Assets/Brick Project Studio.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

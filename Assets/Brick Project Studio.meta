@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Brick Project Studio.meta
 guid: 39f8a5732a15f774e8d434c1ce70a764
+========
+guid: 6315d9097f0ef714cb63b945663ecbb3
+>>>>>>>> mavrosflix-backup:Assets/Brick Project Studio/Apartment Kit.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

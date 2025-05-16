@@ -1,8 +1,15 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/TextMesh Pro/Examples & Extras/Resources.meta
 guid: d6d3a169ad794942a21da6a552d62f6f
 folderAsset: yes
 timeCreated: 1436068007
 licenseType: Pro
+========
+guid: b80d857f0927f6b48b703072a6c76a31
+folderAsset: yes
+timeCreated: 1530842966
+licenseType: Store
+>>>>>>>> mavrosflix-backup:Assets/Brick Project Studio/_BPS Basic Assets/Common/Materials.meta
 DefaultImporter:
   userData: 
   assetBundleName: 

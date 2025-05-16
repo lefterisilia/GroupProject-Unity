@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/Game.unity.meta
 guid: 78885ff2366ddad49b8384f1f69ce0e6
+========
+guid: 5075a036498794743b89f2b4618ca847
+>>>>>>>> mavrosflix-backup:Assets/Scenes/VladScene.unity.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
