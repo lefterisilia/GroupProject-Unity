@@ -1065,6 +1065,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 3897430751268578219, guid: 5aaa539dc9aa24f49985e77cda08c963, type: 3}
+      propertyPath: FlashLightLight
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 3903345279201600894, guid: 5aaa539dc9aa24f49985e77cda08c963, type: 3}
       propertyPath: m_Layer
       value: 7
@@ -1569,8 +1573,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3a3cfca9b9a9ad46a39fea18cdf4ee1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHits: 2
+  maxHP: 2
+  currentHP: 0
   respawnPoint: {fileID: 1198742069}
+  hpText: {fileID: 0}
 --- !u!114 &803736066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1645,8 +1651,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a613635bee2284e84aa6b42c4f76c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toggleKey: 102
   flashlightLight: {fileID: 1314950026}
+  toggleKey: 102
+  reloadKey: 114
+  maxBattery: 100
+  batteryDrainRate: 5
+  maxSpareBatteries: 5
+  batteryPercentText: {fileID: 0}
+  spareCountText: {fileID: 0}
+  enableFlicker: 1
+  flickerThreshold: 20
+  flickerChance: 0.2
+  flickerInterval: 0.2
 --- !u!1001 &895343111
 PrefabInstance:
   m_ObjectHideFlags: 0
