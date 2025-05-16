@@ -207,7 +207,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7069834, y: 0, z: 0, w: 0.7072302}
   m_LocalPosition: {x: -32.8638, y: 60.6643, z: 322.99}
-  m_LocalScale: {x: 763.9482, y: 500, z: 549.2}
+  m_LocalScale: {x: 555.6149, y: 500, z: 549.2}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3788200285470486612}
@@ -300,7 +300,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ef708a691d0bc44fac9ffed19923263, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doorAnimator: {fileID: 0}
 --- !u!65 &-3658035727119840754
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -320,8 +319,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.008969387, y: 0.00079999986, z: 0.02059183}
-  m_Center: {x: 0, y: 0.00013333333, z: 0.010295915}
+  m_Size: {x: 0.02102244, y: 0.017522303, z: 0.020591829}
+  m_Center: {x: -0.0009790518, y: 0.0005484996, z: 0.010295924}
 --- !u!54 &-4876226621801139684
 Rigidbody:
   m_ObjectHideFlags: 0
