@@ -13,52 +13,49 @@ public class ElevatorController : MonoBehaviour
     public Animation elevatorRedAnim;
     public Animation hallFrameRedAnim;
 
-    [Header("Fix Requirements")]
-    public int requiredFixes = 2;
-    private int currentFixes = 0;
-    private bool isPowered = false;
-
     [Header("Player Detection")]
     public LayerMask playerLayer;
     private GameObject player;
 
     private bool isMoving = false;
+    private bool isPowered = false;
     private ElevatorLightController lightController;
 
     void Start()
     {
         lightController = GetComponentInChildren<ElevatorLightController>();
 
-        // TEMP: auto-enable power if no fix is required
-        if (requiredFixes == 0)
+        // If engine is already fixed (e.g., testing scene), power on immediately
+        if (FixManager.Instance != null && FixManager.Instance.EngineIsFixed)
         {
-            isPowered = true;
-            if (lightController != null) lightController.PowerOn();
+            PowerOnElevator();
         }
     }
 
     void Update()
     {
+        // Check if engine got fixed during runtime and hasn't powered elevator yet
+        if (!isPowered && FixManager.Instance != null && FixManager.Instance.EngineIsFixed)
+        {
+            PowerOnElevator();
+        }
+
         if (isMoving || !isPowered) return;
 
         if (IsPlayerInside())
         {
-            if (Input.GetKeyDown(KeyCode.Alpha0)) { Debug.Log("[Elevator] 0"); MoveToFloor(0); }
-            if (Input.GetKeyDown(KeyCode.Alpha1)) { Debug.Log("[Elevator] 1"); MoveToFloor(1); }
-            if (Input.GetKeyDown(KeyCode.Alpha2)) { Debug.Log("[Elevator] 2"); MoveToFloor(2); }
-            if (Input.GetKeyDown(KeyCode.Alpha3)) { Debug.Log("[Elevator] 3"); MoveToFloor(3); }
+            if (Input.GetKeyDown(KeyCode.Alpha0)) { MoveToFloor(0); }
+            if (Input.GetKeyDown(KeyCode.Alpha1)) { MoveToFloor(1); }
+            if (Input.GetKeyDown(KeyCode.Alpha2)) { MoveToFloor(2); }
+            if (Input.GetKeyDown(KeyCode.Alpha3)) { MoveToFloor(3); }
         }
     }
 
-    public void RegisterFix()
+    void PowerOnElevator()
     {
-        currentFixes++;
-
-        if (currentFixes >= requiredFixes && !isPowered)
-        {
-            isPowered = true;
-            if (lightController != null) lightController.PowerOn();
-        }
+        isPowered = true;
+        if (lightController != null) lightController.PowerOn();
+        Debug.Log("[Elevator] Power ON (Engine fixed)");
     }
 
     bool IsPlayerInside()
@@ -126,14 +123,12 @@ public class ElevatorController : MonoBehaviour
         }
 
         AnimationClip clip = anim.GetClip(name);
-
         if (clip == null)
         {
             Debug.LogWarning($"[Elevator] Clip '{name}' not found on {anim.gameObject.name}.");
             return;
         }
 
-        Debug.Log($"[Elevator] Playing: {name} on {anim.gameObject.name}");
         anim.clip = clip;
         anim.Play();
     }
