@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: b8cd4065e97765048bdb380058ee2891, type: 3}
       propertyPath: m_LocalScale.x
-      value: 769.133
+      value: 603.04065
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b8cd4065e97765048bdb380058ee2891, type: 3}
       propertyPath: m_LocalScale.y
@@ -18,19 +18,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b8cd4065e97765048bdb380058ee2891, type: 3}
       propertyPath: m_LocalScale.z
-      value: 538.6167
+      value: 549.2824
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b8cd4065e97765048bdb380058ee2891, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -15.5415
+      value: -41.3116
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b8cd4065e97765048bdb380058ee2891, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 77.334076
+      value: 60.664276
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b8cd4065e97765048bdb380058ee2891, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 335.16763
+      value: 243.35046
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b8cd4065e97765048bdb380058ee2891, type: 3}
       propertyPath: m_LocalRotation.w
@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   requiredKey: -1
-  interactRange: 1.5
+  interactRange: 5
   interactKey: 101
   openAngle: 90
   openSpeed: 1
