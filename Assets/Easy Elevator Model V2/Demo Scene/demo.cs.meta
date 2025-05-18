@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 98b05e964f81cab488cfd24ac2373f0c
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 25144
+  packageName: Easy Elevator Model
+  packageVersion: 2.1
+  assetPath: Assets/Easy Elevator Model V2/Demo Scene/demo.cs
+  uploadId: 242169
