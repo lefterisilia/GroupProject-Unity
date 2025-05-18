@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using System.Collections;
 
@@ -23,10 +23,16 @@ public class FlashlightController : MonoBehaviour
     public float flickerChance = 0.2f;   // 20% chance
     public float flickerInterval = 0.2f;
 
+    [Header("Sound Effects")]
+    public AudioClip toggleSound;
+    public float toggleVolume = 0.7f;
+
     private float currentBattery;
     private int spareBatteries = 0;
     private bool isOn = false;
     private float flickerTimer = 0f;
+
+    private AudioSource audioSource;
 
     void Start()
     {
@@ -36,6 +42,10 @@ public class FlashlightController : MonoBehaviour
         currentBattery = maxBattery;
         isOn = false;
         flashlightLight.enabled = false;
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void Update()
@@ -55,6 +65,10 @@ public class FlashlightController : MonoBehaviour
             {
                 isOn = !isOn;
                 flashlightLight.enabled = isOn;
+
+                // 🔊 Play toggle sound
+                if (toggleSound != null && audioSource != null)
+                    audioSource.PlayOneShot(toggleSound, toggleVolume);
             }
         }
     }
