@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Door : MonoBehaviour
 {
@@ -10,17 +10,28 @@ public class Door : MonoBehaviour
     public float openSpeed = 2f;
 
     [Header("Interaction Offset")]
-    public Vector3 offset = Vector3.zero; // Offset the center of the interact range
+    public Vector3 offset = Vector3.zero;
+
+    [Header("Sound Effects")]
+    public AudioClip[] openSounds;
+    public AudioClip[] closeSounds;
+    public AudioClip lockedSound; // 🔐 NEW
 
     private bool isOpen = false;
     private bool isMoving = false;
     private Quaternion closedRotation;
     private Quaternion openRotation;
 
+    private AudioSource audioSource;
+
     void Start()
     {
         closedRotation = transform.rotation;
         openRotation = Quaternion.Euler(transform.eulerAngles + Vector3.up * openAngle);
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
     }
 
     void Update()
@@ -38,6 +49,11 @@ public class Door : MonoBehaviour
                 }
                 else
                 {
+                    // 🔊 Play locked door sound
+                    if (lockedSound != null && audioSource != null)
+                        audioSource.PlayOneShot(lockedSound);
+
+                    // Optional UI message
                     UIManager.Instance.ShowMessage($"You don't have the key for Door {requiredKey}!");
                 }
 
@@ -50,6 +66,18 @@ public class Door : MonoBehaviour
     {
         isMoving = true;
         Quaternion target = isOpen ? closedRotation : openRotation;
+
+        // 🔊 Play random open or close sound
+        if (audioSource != null)
+        {
+            AudioClip[] soundPool = isOpen ? closeSounds : openSounds;
+
+            if (soundPool != null && soundPool.Length > 0)
+            {
+                int randomIndex = Random.Range(0, soundPool.Length);
+                audioSource.PlayOneShot(soundPool[randomIndex]);
+            }
+        }
 
         float t = 0f;
         while (t < 1f)
