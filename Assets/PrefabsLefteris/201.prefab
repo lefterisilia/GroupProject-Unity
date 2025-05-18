@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: bbf3d8917206af042afd8840cac041ee, type: 3}
       propertyPath: m_Name
-      value: 203Key
+      value: 201
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -89,6 +89,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78ab43225165abc4283b7c05d10f3b49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  keyNumber: 203
+  keyNumber: 201
   interactRange: 2
   interactKey: 101
