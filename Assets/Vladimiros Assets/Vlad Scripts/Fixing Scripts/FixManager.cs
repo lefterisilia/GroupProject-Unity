@@ -5,40 +5,44 @@ public class FixManager : MonoBehaviour
 {
     public static FixManager Instance;
 
-    public int totalToFix = 5;
-    private int fixedCount = 0;
+    [Header("Fix Settings")]
+    public int totalFixesRequired = 5;
 
-    public TextMeshProUGUI statusText;
+    [Header("UI")]
+    public TMP_Text fixStatusText;      // PCs fixed text
+    public TMP_Text engineStatusText;   // Engine fixed text
+
+    public int FixesDone { get; private set; } = 0;
+
+    public bool EngineIsFixed { get; set; } = false;
 
     void Awake()
     {
-        if (Instance == null)
-            Instance = this;
-        else
+        if (Instance != null && Instance != this)
+        {
             Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
 
     void Start()
     {
-        UpdateUI();
+        UpdateFixUI();
     }
 
     public void RegisterFix()
     {
-        fixedCount++;
-        UpdateUI();
+        FixesDone++;
+        UpdateFixUI();
     }
 
-    void UpdateUI()
+    public void UpdateFixUI()
     {
-        if (statusText != null)
-        {
-            statusText.text = $"{fixedCount} / {totalToFix} PCs Fixed";
-        }
-    }
+        if (fixStatusText != null)
+            fixStatusText.text = $"PCs Fixed: {FixesDone}/{totalFixesRequired}";
 
-    public bool AllFixed()
-    {
-        return fixedCount >= totalToFix;
+        if (engineStatusText != null)
+            engineStatusText.text = $"Engines Fixed: {(EngineIsFixed ? 1 : 0)}/1";
     }
 }
