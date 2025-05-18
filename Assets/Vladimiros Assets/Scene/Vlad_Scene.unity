@@ -1966,6 +1966,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1810440153}
     - target: {fileID: 1780801044881483372, guid: 4511cc3a236f51843bea0b68f93cf9f3, type: 3}
+      propertyPath: requiredPCFixes
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1780801044881483372, guid: 4511cc3a236f51843bea0b68f93cf9f3, type: 3}
       propertyPath: engineMinigameUI
       value: 
       objectReference: {fileID: 1245212882}
