@@ -3,19 +3,48 @@ using UnityEngine.AI;
 
 public class MonsterAI : MonoBehaviour
 {
-    public float walkSpeed = 2f;
-    public float runSpeed = 5f;
+    [Header("Movement Settings")]
+    public float walkSpeed = 3f;
+    public float runSpeed = 6f;
+    
+    [Header("Stuck Detection")]
+    public float stuckDistanceThreshold = 0.1f;
+    public float stuckTimeThreshold = 2f;
+    public float unstuckDistance = 1f;
+    public float unstuckAngle = 45f;
+
+    [Header("Chase Settings")]
+    public float chaseResumeDelay = 2f;
+    public float maxChaseDistance = 100f;
+    private float lastChaseTime;
 
     private NavMeshAgent agent;
     private Transform player;
     private bool isChasing = false;
     private MonsterStunHandler stun;
+    private Animator animator;
+    
+    // Stuck detection variables
+    private Vector3 lastPosition;
+    private float stuckTimer;
+    private bool isStuck = false;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = walkSpeed;
         stun = GetComponent<MonsterStunHandler>();
+        animator = GetComponent<Animator>();
+        
+        // Configure NavMeshAgent for better navigation
+        agent.acceleration = 15f;
+        agent.angularSpeed = 240f;
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+        agent.radius = 0.6f;
+        agent.height = 2.2f;
+        agent.baseOffset = 0.1f;
+        
+        lastPosition = transform.position;
     }
 
     public void OnPlayerTriggerEnter(TriggerZone.TriggerType type, PlayerController playerController)
@@ -36,7 +65,7 @@ public class MonsterAI : MonoBehaviour
                     {
                         health.TakeHit();
                         stun.TriggerStun();
-                        isChasing = false; // Stop chasing after hit
+                        isChasing = false;
                     }
                     else if (!health.IsStunned() && !isChasing && !stun.IsStunned())
                     {
@@ -49,14 +78,14 @@ public class MonsterAI : MonoBehaviour
             case TriggerZone.TriggerType.Mid:
                 if (!playerController.IsCrouching && HasLineOfSight(player.position))
                 {
-                    MoveToLastPosition(player.position, playerController.IsSprinting);
+                    StartChasing(player);
                 }
                 break;
 
             case TriggerZone.TriggerType.Far:
-                if (playerController.HasRecentlySprinted() && playerController.LastSprintPosition.HasValue)
+                if (playerController.HasRecentlySprinted() || HasLineOfSight(player.position))
                 {
-                    MoveToLastPosition(playerController.LastSprintPosition.Value, false);
+                    StartChasing(player);
                 }
                 break;
         }
@@ -73,17 +102,16 @@ public class MonsterAI : MonoBehaviour
                     !playerController.IsCrouching &&
                     HasLineOfSight(playerController.transform.position))
                 {
-                    Debug.Log("[MidTrigger] Stay: valid sound - going to last position");
-                    MoveToLastPosition(playerController.transform.position, playerController.IsSprinting);
+                    Debug.Log("[MidTrigger] Stay: detected player - starting chase");
+                    StartChasing(playerController.transform);
                 }
                 break;
 
             case TriggerZone.TriggerType.Far:
                 if (!IsChasingPlayer() &&
-                    playerController.HasRecentlySprinted() &&
-                    playerController.LastSprintPosition.HasValue)
+                    (playerController.HasRecentlySprinted() || HasLineOfSight(playerController.transform.position)))
                 {
-                    MoveToLastPosition(playerController.LastSprintPosition.Value, false);
+                    StartChasing(playerController.transform);
                 }
                 break;
         }
@@ -93,15 +121,10 @@ public class MonsterAI : MonoBehaviour
     {
         if (type == TriggerZone.TriggerType.Mid && !isChasing && !stun.IsStunned())
         {
-            // Double check if line of sight is valid before reacting
             if (HasLineOfSight(lastPosition))
             {
-                Debug.Log("[MidTrigger Exit] Valid exit detection - moving to last known position");
-                MoveToLastPosition(lastPosition, false);
-            }
-            else
-            {
-                Debug.Log("[MidTrigger Exit] Ignored - blocked by wall");
+                Debug.Log("[MidTrigger Exit] Valid exit detection - starting chase");
+                StartChasing(player);
             }
         }
     }
@@ -109,12 +132,19 @@ public class MonsterAI : MonoBehaviour
     void StartChasing(Transform target)
     {
         isChasing = true;
+        lastChaseTime = Time.time;
         agent.speed = runSpeed;
         agent.SetDestination(target.position);
     }
 
     void MoveToLastPosition(Vector3 position, bool sprinted)
     {
+        if (player != null && HasLineOfSight(player.position))
+        {
+            StartChasing(player);
+            return;
+        }
+
         isChasing = false;
         agent.speed = sprinted ? runSpeed : walkSpeed;
         agent.SetDestination(position);
@@ -122,9 +152,106 @@ public class MonsterAI : MonoBehaviour
 
     void Update()
     {
+        if (stun.IsStunned()) 
+        {
+            if (animator != null)
+            {
+                animator.SetFloat("Speed", 0f);
+            }
+            return;
+        }
+
+        // Check for stuck condition
+        if (!isStuck && !agent.pathPending)
+        {
+            float distanceMoved = Vector3.Distance(transform.position, lastPosition);
+            if (distanceMoved < stuckDistanceThreshold)
+            {
+                stuckTimer += Time.deltaTime;
+                if (stuckTimer >= stuckTimeThreshold)
+                {
+                    isStuck = true;
+                    HandleStuckSituation();
+                }
+            }
+            else
+            {
+                stuckTimer = 0f;
+            }
+        }
+        
+        lastPosition = transform.position;
+
+        // Update animator speed parameter based on actual movement
+        if (animator != null)
+        {
+            float currentSpeed = agent.velocity.magnitude;
+            animator.SetFloat("Speed", currentSpeed);
+        }
+
+        // Enhanced chase behavior
         if (isChasing && player != null && !stun.IsStunned())
         {
-            agent.SetDestination(player.position);
+            float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+            
+            if (distanceToPlayer <= maxChaseDistance || Time.time - lastChaseTime < chaseResumeDelay)
+            {
+                agent.SetDestination(player.position);
+                
+                if (isStuck && agent.pathStatus == NavMeshPathStatus.PathPartial)
+                {
+                    TryFindAlternativePath();
+                }
+            }
+            else
+            {
+                isChasing = false;
+            }
+        }
+    }
+
+    void HandleStuckSituation()
+    {
+        Debug.Log("[Monster] Detected stuck situation - attempting recovery");
+        
+        // Try to move slightly back and to the side
+        Vector3 randomDirection = Quaternion.Euler(0, Random.Range(-unstuckAngle, unstuckAngle), 0) * -transform.forward;
+        Vector3 unstuckPosition = transform.position + randomDirection * unstuckDistance;
+        
+        // Sample a valid position on the NavMesh
+        NavMeshHit hit;
+        if (NavMesh.SamplePosition(unstuckPosition, out hit, unstuckDistance, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+            agent.isStopped = false;
+            isStuck = false;
+            stuckTimer = 0f;
+        }
+        else
+        {
+            // If we can't find a valid position, try to teleport slightly up
+            transform.position += Vector3.up * 0.1f;
+            agent.ResetPath();
+            isStuck = false;
+            stuckTimer = 0f;
+        }
+    }
+
+    void TryFindAlternativePath()
+    {
+        if (player == null) return;
+
+        // Try to find a path with a larger radius
+        NavMeshPath path = new NavMeshPath();
+        float radius = 2f;
+        Vector3 randomOffset = Random.insideUnitSphere * radius;
+        randomOffset.y = 0;
+        
+        if (NavMesh.CalculatePath(transform.position, player.position + randomOffset, NavMesh.AllAreas, path))
+        {
+            agent.SetPath(path);
+            isStuck = false;
+            stuckTimer = 0f;
         }
     }
 
