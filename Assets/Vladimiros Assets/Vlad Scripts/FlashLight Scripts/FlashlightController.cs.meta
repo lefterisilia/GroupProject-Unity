@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 84a613635bee2284e84aa6b42c4f76c2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - flashlightLight: {instanceID: 0}
+  - batteryPercentText: {instanceID: 0}
+  - spareCountText: {instanceID: 0}
+  - toggleSound: {fileID: 8300000, guid: 5c1dac616ccec5649a7c95f732ff5e7b, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
